@@ -1,0 +1,17 @@
+[project]
+name = "turing-machine"
+version = "0.1.0"
+description = "A simple turing machine framework"
+authors = [
+    {name = "v4rgas",email = "66626747+v4rgas@users.noreply.github.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
