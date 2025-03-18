@@ -34,9 +34,9 @@ class Tape:
             self.head = 0
 
     def move(self, direction: Direction):
-        if direction == Direction.LEFT:
+        if direction == Direction.RIGHT:
             self.__next()
-        elif direction == Direction.RIGHT:
+        elif direction == Direction.LEFT:
             self.__prev()
         else:
             raise ValueError("Invalid direction")
