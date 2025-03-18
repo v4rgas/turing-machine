@@ -47,9 +47,11 @@ class Tape:
         
 
     def print(self):    
-        print(self.__tape)
+        str_tape = str(self.__tape) + '\n'
         spacing = len(str(self.__tape[0:self.__head + 1])) - 3
-        print(" " * spacing  + "^")  
+        str_tape += " " * spacing + "^"
+
+        print(str_tape)
 
 
 class State:
