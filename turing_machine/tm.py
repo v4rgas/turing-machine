@@ -56,6 +56,11 @@ class State:
     def get_transition(self, read) -> "Transition":
         return self.__transitions.get(read)
 
+    def print_transitions(self):
+        print(f"Transitions of {self.name}:")
+        for read_symbol, transition in self.__transitions.items():
+            print(f"  On '{read_symbol}': Write '{transition.write}', Move {transition.move}, Go to '{transition.to_state.name}'")
+
 
 class Transition:
     from_state: State
@@ -83,6 +88,9 @@ class TuringMachine:
     def add_state(self, state: State):
         self.states[state.name] = state
 
+    def load_input(self, values: list[str]):
+        self.tape.tape = [*values]
+
     def next_step(self):
         current_symbol = self.tape.get()
         transition = self.current_state.get_transition(current_symbol)
@@ -90,8 +98,34 @@ class TuringMachine:
         self.tape.move(transition.move)
         self.current_state = transition.to_state
 
-    def print_tape(self):
+    def print_tape(self, position=False):
         print(self.tape.tape)
+        
+        if position:
+            spacing = len(str(self.tape.tape[0:self.tape.head + 1])) - 3
+            print(" " * spacing  + "^")  
+
+
+def example_2():
+    state_a = State("A")
+    state_b = State("B")
+
+    state_a.add_transition(state_a, " ", "a", Direction.RIGHT)
+    state_a.add_transition(state_b, "b", "b", Direction.LEFT)
+
+    state_a.print_transitions()
+
+    state_b.add_transition(state_a, " ", "a", Direction.RIGHT)
+    state_b.add_transition(state_b, "a", "a", Direction.LEFT)
+
+    tm = TuringMachine(state_a)
+
+    tm.load_input([" ", " ", " ", " ", "b"])
+
+    tm.print_tape()
+    for _ in range(10):
+        tm.next_step()
+        tm.print_tape(position = True)
 
 
 if __name__ == "__main__":
