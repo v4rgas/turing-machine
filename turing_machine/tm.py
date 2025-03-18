@@ -7,31 +7,35 @@ class Direction(Enum):
 
 
 class Tape:
-    tape: list[str]
-    head: int
+    __tape: list[str]
+    __head: int
 
     EMPTY = " "
 
     def __init__(self):
-        self.tape = [Tape.EMPTY]
-        self.head = 0
+        self.__tape = [Tape.EMPTY]
+        self.__head = 0
 
     def get(self):
-        return self.tape[self.head]
+        return self.__tape[self.__head]
 
     def set(self, value):
-        self.tape[self.head] = value
+        self.__tape[self.__head] = value
 
     def __next(self):
-        self.head += 1
-        if self.head == len(self.tape):
-            self.tape.append(Tape.EMPTY)
+        self.__head += 1
+        if self.__head == len(self.__tape):
+            self.__tape.append(Tape.EMPTY)
 
     def __prev(self):
-        self.head -= 1
-        if self.head < 0:
-            self.tape.insert(0, Tape.EMPTY)
-            self.head = 0
+        self.__head -= 1
+        if self.__head < 0:
+            self.__tape.insert(0, Tape.EMPTY)
+            self.__head = 0
+
+
+    def set_initial(self, values: list[str]):
+        self.__tape = values
 
     def move(self, direction: Direction):
         if direction == Direction.RIGHT:
@@ -40,6 +44,12 @@ class Tape:
             self.__prev()
         else:
             raise ValueError("Invalid direction")
+        
+
+    def print(self):    
+        print(self.__tape)
+        spacing = len(str(self.__tape[0:self.__head + 1])) - 3
+        print(" " * spacing  + "^")  
 
 
 class State:
@@ -81,29 +91,27 @@ class Transition:
 
 class TuringMachine:
     def __init__(self, initial_state: State):
-        self.tape = Tape()
-        self.states = {initial_state.name: initial_state}
-        self.current_state = initial_state
+        self.__tape = Tape()
+        self.__states = {initial_state.name: initial_state}
+        self.__current_state = initial_state
 
     def add_state(self, state: State):
-        self.states[state.name] = state
+        self.__states[state.name] = state
 
     def load_input(self, values: list[str]):
-        self.tape.tape = [*values]
+        self.__tape.set_initial(values)
 
     def next_step(self):
-        current_symbol = self.tape.get()
-        transition = self.current_state.get_transition(current_symbol)
-        self.tape.set(transition.write)
-        self.tape.move(transition.move)
-        self.current_state = transition.to_state
+        current_symbol = self.__tape.get()
+        transition = self.__current_state.get_transition(current_symbol)
+        self.__tape.set(transition.write)
+        self.__tape.move(transition.move)
+        self.__current_state = transition.to_state
 
-    def print_tape(self, position=False):
-        print(self.tape.tape)
-        
-        if position:
-            spacing = len(str(self.tape.tape[0:self.tape.head + 1])) - 3
-            print(" " * spacing  + "^")  
+    def print_tape(self):
+        self.__tape.print()
+
+
 
 
 def example_2():
@@ -122,21 +130,13 @@ def example_2():
 
     tm.load_input([" ", " ", " ", " ", "b"])
 
-    tm.print_tape()
-    for _ in range(10):
-        tm.next_step()
-        tm.print_tape(position = True)
 
-
-if __name__ == "__main__":
-    state_a = State("A")
-    state_a.add_transition(state_a, " ", "a", Direction.RIGHT)
-
-    tm = TuringMachine(state_a)
-
+    print("Starting tape:")
     tm.print_tape()
     for _ in range(10):
         tm.next_step()
         tm.print_tape()
 
-    print(tm.current_state.name)
+
+if __name__ == "__main__":
+    example_2()
